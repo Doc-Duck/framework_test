@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <form method="post">
+        <input type="text" name="name" id="name" class="form-control" placeholder="Название товара"><br>
+        <input type="text" name="price" id="price" class="form-control" placeholder="Цена Р"><br>
+        <input type="submit" class="btn btn-success" >
+    </form>
+</div>
+{% endblock %}
