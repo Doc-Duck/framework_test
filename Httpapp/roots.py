@@ -18,12 +18,6 @@ def logout():
     return redirect(url_for('index'))
 
 
-#@apps.after_request
-#def redirect_to_signin(response):
- #   if response.status.code == 401:
-  #      return redirect(url_for('login') + '?next=' + request.url)
-
-
 @apps.route('/register', methods=['POST', 'GET'])
 def register():
     login = request.form.get('login')
@@ -56,11 +50,13 @@ def login():
 
         if user and check_password_hash(user.password, password):
             login_user(user)
+            return redirect(url_for('addprod'))
         else:
             flash('Данные введены некорректно')
             redirect(url_for('login'))
     else:
         flash('Пожалуйста заполните поля авторизации')
+        return render_template('login.html')
     return render_template('login.html')
 
 
@@ -75,7 +71,7 @@ def addprod():
         print(price)
         db.session.add(items)
         db.session.commit()
-        return redirect('/')
+        return redirect('viewer')
     else:
         return render_template('adprod.html')
 
