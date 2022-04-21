@@ -1,17 +1,10 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 apps = Flask(__name__)
 apps.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///items.db'
 apps.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(apps)
-
-class Лист1(db.Model):
-    name = db.Column(primary_key=True)
-    price = db.Column()
-
-    def __repr__(self):
-        return '<List %r>' % self.id
 
 
 class Items(db.Model):
@@ -57,16 +50,11 @@ def adduser():
         return render_template('adprod.html')
 
 
-@apps.route('/stats')
-def stats():
-    return 'hi'
-
-
-def start():
-    apps.run(debug=True, use_reloader=False)
-
-
-@apps.route("/viewer")
+@apps.route('/viewer')
 def viewer():
-	items = Лист1.query.all()
-	return render_template("viewer.html", items=items)
+    items = Items.query.order_by(Items.id).all()
+    return render_template("viewer.html", items=items)
+
+
+if __name__ == '__main__':
+    apps.run(debug=True, use_reloader=False)
