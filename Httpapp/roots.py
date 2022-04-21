@@ -1,5 +1,6 @@
+import flask_login
 from flask import render_template, request, redirect, url_for, flash
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from Httpapp import db, apps
@@ -63,6 +64,10 @@ def login():
 @apps.route('/adprod', methods=['POST', 'GET'])
 @login_required
 def addprod():
+    user = str(current_user)
+    for i in filter(str.isdigit, user): id = i
+    print(id)
+    user = User.query.filter_by(id=id).first()
     if request.method == 'POST':
         name = request.form['name']
         price = request.form['price']
@@ -73,11 +78,15 @@ def addprod():
         db.session.commit()
         return redirect('viewer')
     else:
-        return render_template('adprod.html')
+        return render_template('adprod.html', user=user)
 
 
 @apps.route('/viewer')
 @login_required
 def viewer():
+    user = str(current_user)
+    for i in filter(str.isdigit, user): id = i
+    print(id)
+    user = User.query.filter_by(id=id).first()
     items = Items.query.order_by(Items.id).all()
-    return render_template("viewer.html", items=items)
+    return render_template("viewer.html", items=items, user=user)
