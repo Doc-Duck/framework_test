@@ -81,7 +81,10 @@ def addprod():
 @login_required
 def viewer():
     items = Items.query.order_by(Items.id).all()
-    return render_template("viewer.html", items=items)
+    for item in items:
+        for word in str(item):
+            print(word)
+    return render_template("viewer.html", items=items), print(type(items[1]))
 
 
 @manager.user_loader

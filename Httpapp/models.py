@@ -9,7 +9,7 @@ class Items(db.Model):
     price = db.Column(db.Float(100), nullable=False)
 
     def __repr__(self):
-        return '<Items %r>' % self.id
+        return "%s %s" % (str(self.name), str(self.price))
 
 
 class Users(db.Model):
