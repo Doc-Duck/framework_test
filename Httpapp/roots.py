@@ -64,10 +64,6 @@ def login():
 @apps.route('/adprod', methods=['POST', 'GET'])
 @login_required
 def addprod():
-    user = str(current_user)
-    for i in filter(str.isdigit, user): id = i
-    print(id)
-    user = User.query.filter_by(id=id).first()
     if request.method == 'POST':
         name = request.form['name']
         price = request.form['price']
@@ -78,14 +74,14 @@ def addprod():
         db.session.commit()
         return redirect('viewer')
     else:
-        return render_template('adprod.html', user=user)
+        return render_template('adprod.html')
 
 
 @apps.route('/viewer')
 @login_required
 def viewer():
     items = Items.query.order_by(Items.id).all()
-    return render_template("viewer.html", items=items, user=user)
+    return render_template("viewer.html", items=items)
 
 
 @manager.user_loader
