@@ -4,7 +4,8 @@ from flask_login import login_user, login_required, logout_user, current_user, l
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from Httpapp import db, apps, manager
-from Httpapp.models import Items, User
+from Httpapp.models import Items, User #list_add
+from Httpapp.exelimport import new_table
 
 
 @apps.route('/')
@@ -79,23 +80,11 @@ def addprod():
 @apps.route('/viewer')
 @login_required
 def viewer():
-    name = []
-    price = []
-    i = 0
     items = Items.query.order_by(Items.id).all()
-    if len(name) < 1:
-        for item in items:
-            a = str(item).split(' ')
-            for it in a:
-                if i % 2 == 0:
-                    name.append(it)
-                else:
-                    price.append(it)
-                i += 1
-    return render_template("viewer.html", items=items, name=name, price=price)
+    #new_table('Idk.xlsx')
+    return render_template("viewer.html", items=items)
 
 
 @manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
-

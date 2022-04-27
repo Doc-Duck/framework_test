@@ -6,9 +6,10 @@
   <thead>
   </thead>
   <tbody>
-  {% for el in name %}
+  {% for el in items %}
     <tr>
-      <td style="text-align: center; display: flex"><p style="text-align: left" >{{ el }}</p> <p>{{ price[0] }}</p></td>
+      <td style="text-align: center">{{ el.name }}</td>
+      <td style="text-align: center">{{ el.price }}</td>
     </tr>
   {% endfor %}
   </tbody>
