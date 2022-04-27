@@ -69,7 +69,6 @@ def addprod():
         price = request.form['price']
 
         items = Items(name=name, price=price)
-        print(price)
         db.session.add(items)
         db.session.commit()
         return redirect('viewer')
@@ -80,11 +79,20 @@ def addprod():
 @apps.route('/viewer')
 @login_required
 def viewer():
+    name = []
+    price = []
+    i = 0
     items = Items.query.order_by(Items.id).all()
-    for item in items:
-        for word in str(item):
-            print(word)
-    return render_template("viewer.html", items=items), print(type(items[1]))
+    if len(name) < 1:
+        for item in items:
+            a = str(item).split(' ')
+            for it in a:
+                if i % 2 == 0:
+                    name.append(it)
+                else:
+                    price.append(it)
+                i += 1
+    return render_template("viewer.html", items=items, name=name, price=price)
 
 
 @manager.user_loader

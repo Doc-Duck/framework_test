@@ -14,7 +14,7 @@ class Items(db.Model):
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column
     role = db.Column(db.Float(100), nullable=False)
 
     def __repr__(self):
@@ -27,7 +27,8 @@ class User (db.Model, UserMixin):
     password = db.Column(db.String(100), nullable=False,)
 
 
-
 @manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
+
