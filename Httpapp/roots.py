@@ -81,10 +81,18 @@ def addprod():
 @login_required
 def viewer():
     items = Items.query.order_by(Items.id).all()
-    #new_table('Idk.xlsx')
     return render_template("viewer.html", items=items)
 
 
 @manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
+
+@apps.route('/addtable', methods=['POST', 'GET'])
+def addtable():
+    if request.method == 'POST':
+        route = request.form['route']
+        sheetname = request.form['sheetname']
+        new_table(rf'{ route }', f'{sheetname}')
+    return render_template('addtable.html')

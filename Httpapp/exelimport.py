@@ -1,30 +1,44 @@
 import sqlite3
 import pandas as pd
+from transliterate import translit
 import openpyxl
 
 
-def new_table(file_name):
-
-    #----------------Добавление таблицы в бд----------------
+def new_table(file_name, sheetname):
+    # ----------------Добавление таблицы в бд----------------
+    ss = openpyxl.load_workbook(file_name)
+    ss_sheet = ss.get_sheet_by_name(sheetname)
+    ss_sheet.title = translit(sheetname, language_code='ru', reversed=True)
+    sheetname = ss_sheet.title
+    ss.save(file_name)
 
     con = sqlite3.connect('Httpapp/items.db')
-    wb = pd.read_excel(file_name, sheet_name=None)
-    for sheet in wb:
-        wb[sheet].to_sql(sheet, con, index=False)
+    wb = pd.read_excel(file_name)
+    for column in wb:
+        trans = translit(column, language_code='ru', reversed=True)
+        trans = trans.replace(' ', '')
+        trans = trans.replace("'", '')
+        wb.rename(columns={f'{column}': f'{trans}'}, inplace=True)
+    wb.to_sql(sheetname, con)
     con.commit()
     con.close()
 
+    # ----------------Чтение exel файла----------------
 
-    #----------------Чтение exel файла----------------
-
-    s = str(pd.read_excel(file_name).columns).replace("'", "")
-    result = s[s.find('[')+1:s.find(']')]
-    result = result.split(', ')
-    xl = pd.ExcelFile(file_name).sheet_names[0]
+    result = pd.read_excel(file_name).columns.values
+    counter = 0
+    for it in result:
+        result[counter] = result[counter].replace(' ', '')
+        result[counter] = result[counter].replace("'", '')
+        result[counter] = translit(result[counter], language_code='ru', reversed=True)
+        counter += 1
+    xl = pd.ExcelFile(file_name).sheet_names
+    index = xl.index(sheetname)
+    xl = pd.ExcelFile(file_name).sheet_names[index]
+    xl = translit(xl, language_code='ru', reversed=True)
     print(xl)
 
-
-    #----------------Работа с файлом классов бд----------------
+    # ----------------Работа с файлом классов бд----------------
 
     trash = f'class {xl}(db.Model):\n'
     i = 0
@@ -32,19 +46,20 @@ def new_table(file_name):
         old_data = f.read()
     while i < len(result):
         if i == 0:
-            trash = trash + '\t' + result[i] + ' = db.Column(primary_key=True)\n'
+            trash = trash + '\t' + result[i].replace("'", '') + ' = db.Column(primary_key=True)\n'
         else:
-            trash = trash + '\t' + result[i] + ' = db.Column()\n'
+            trash = trash + '\t' + result[i].replace("'", '') + ' = db.Column()\n'
         i += 1
     with open('Httpapp/models.py', 'w') as f:
         f.write(old_data + trash + '\n')
 
-
-    #----------------Создание html файла таблицы----------------
+    # ----------------Создание html файла таблицы----------------
 
     name = 'Httpapp/templates/' + xl + '.html'
     td = ''
     for column in result:
+        column = column.replace(' ', '')
+        column = column.replace("'", '')
         td = td + f'<td style="text-align: center">{{{{ el.{column} }}}}</td>' + '\n' + '\t\t\t'
         i += 1
     print(td)
@@ -66,8 +81,7 @@ def new_table(file_name):
         </table>\n\
         {{% endblock %}}')
 
-
-    #----------------Создание нового маршрута----------------
+    # ----------------Создание нового маршрута----------------
 
     my_file = open('Httpapp/roots.py', 'a+')
     text_for_file = f'\n\n\n@apps.route("/{xl}")\n@login_required\ndef {xl.lower()}():\n\t{xl.lower()} = {xl}.query.all()\n\treturn render_template("{xl}.html", {xl}={xl.lower()})'
@@ -80,11 +94,10 @@ def new_table(file_name):
     with open('Httpapp/roots.py', 'w') as f:
         f.write(new_data)
 
-
-    #----------------Добавление нового элемента списка в тэмплейт----------------
+    # ----------------Добавление нового элемента списка в тэмплейт----------------
 
     with open('Httpapp/templates/base.html', 'r') as f:
         old_data = f.read()
-    new_data = old_data.replace('<!-- 123 -->', '<!-- hi -->\n\t\t\t<!-- 123 -->')
+    new_data = old_data.replace('<!--- add link --->', f'<li><a href="{ xl }" class="dropdown-item">{ xl.lower() }</a></li>\n\t\t\t\t\t\t<!--- add link --->')
     with open('Httpapp/templates/base.html', 'w') as f:
         f.write(new_data)

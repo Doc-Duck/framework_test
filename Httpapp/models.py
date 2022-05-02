@@ -31,3 +31,4 @@ class User (db.Model, UserMixin):
 def load_user(user_id):
     return User.query.get(user_id)
 
+
