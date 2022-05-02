@@ -20,6 +20,9 @@ Register
         <input type="text" name="login" id="login" class="form-control" placeholder="Логин"><br>
         <input type="password" name="password" id="password" class="form-control" placeholder="Пароль"><br>
         <input type="password" name="password2" id="password2" class="form-control" placeholder="Повторите пароль"><br>
+        {% if current_user.is_Admin == True %}
+            <input type="text" name="is_Admin" id="is_Admin" class="form-control" placeholder="Admin permission"><br>
+        {% endif %}
         <a href="{{ url_for("login") }}" class="btn"></a>
         <input type="submit" class="btn btn-success" >
     </form>

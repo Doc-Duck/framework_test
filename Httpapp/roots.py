@@ -25,7 +25,7 @@ def register():
     login = request.form.get('login')
     password = request.form.get('password')
     password2 = request.form.get('password2')
-
+    is_Admin = request.form.get("is_Admin")
     if request.method == "POST":
         if not (login or password or password2):
             flash('Пожалуйств запоните поля')
@@ -96,3 +96,6 @@ def addtable():
         sheetname = request.form['sheetname']
         new_table(rf'{ route }', f'{sheetname}')
     return render_template('addtable.html')
+
+
+

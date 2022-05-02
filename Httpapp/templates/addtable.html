@@ -5,11 +5,13 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row justify-content-center">
+    {% if current_user.is_Admin == True %}
+        <div class="row justify-content-center">
     <form method="post" class="col-6 text-center">
         <input type="text" name="route" id="route" class="form-control text-center" placeholder="Путь к файлу"><br>
         <input type="text" name="sheetname" id="sheetname" class="form-control text-center" placeholder="Название таблицы"><br>
         <input type="submit" class="btn btn-success" >
     </form>
 </div>
+    {% endif %}
 {% endblock %}
