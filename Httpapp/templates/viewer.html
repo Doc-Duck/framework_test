@@ -1,16 +1,46 @@
 {% extends 'base.html' %}
 
 {% block body %}
-    <table class="table table-striped container">
-        <thead>
-        </thead>
-        <tbody>
-        {% for el in items %}
-            <tr>
-                <td style="text-align: center">{{ el.name }}</td>
-                <td style="text-align: center">{{ el.price }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="row">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+        <table class="table table-striped col">
+            <thead>
+            </thead>
+            <tbody>
+            {% for el in items %}
+                <tr>
+                    <td style="text-align: center">{{ el.name }}</td>
+                    <td style="text-align: center">{{ el.price }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <canvas id="1chart" draggable="true" style="width:100%; max-width:600px"></canvas>
+        <script>
+            var xValues = [{% for el in items %}"{{ el.name }}",{% endfor %}];
+            var yValues = [{% for el in items %}{{ el.price }},{% endfor %}];
+            var barColors = ["red", "green","blue","orange","brown"];
+
+            new Chart("1chart", {
+              type: "bar",
+              data: {
+                labels: xValues,
+                datasets: [{
+                  backgroundColor: barColors,
+                  data: yValues
+                }]
+              },
+              options: {
+                legend: {display: false},
+                title: {
+                  display: true,
+                  text: "Items"
+                },
+                scales: {
+                    yAxes: [{ticks: {min: 0, max: 120}}],
+                }
+              }
+            });
+        </script>
+    </div>
 {% endblock %}

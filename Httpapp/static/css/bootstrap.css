@@ -662,7 +662,6 @@ progress {
   }
 }
 .row {
-  height: 100%;
   --bs-gutter-x: 1.5rem;
   --bs-gutter-y: 0;
   display: flex;

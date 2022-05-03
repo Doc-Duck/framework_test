@@ -96,6 +96,3 @@ def addtable():
         sheetname = request.form['sheetname']
         new_table(rf'{ route }', f'{sheetname}')
     return render_template('addtable.html')
-
-
-

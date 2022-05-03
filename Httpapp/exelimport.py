@@ -2,53 +2,56 @@ import sqlite3
 import pandas as pd
 from transliterate import translit
 import openpyxl
+import re
 
 
 def new_table(file_name, sheetname):
     # ----------------Добавление таблицы в бд----------------
+    old_name = sheetname
     ss = openpyxl.load_workbook(file_name)
     ss_sheet = ss.get_sheet_by_name(sheetname)
-    ss_sheet.title = translit(sheetname, language_code='ru', reversed=True)
+    ss_sheet.title = re.sub(r'[^A-z0-9]', '', translit(sheetname, language_code='ru', reversed=True))
     sheetname = ss_sheet.title
     ss.save(file_name)
 
     con = sqlite3.connect('Httpapp/items.db')
-    wb = pd.read_excel(file_name)
+    wb = pd.read_excel(file_name, sheetname)
     for column in wb:
         trans = translit(column, language_code='ru', reversed=True)
-        trans = trans.replace(' ', '')
-        trans = trans.replace("'", '')
+        trans = re.sub(r'[^A-z0-9]', '', trans)
         wb.rename(columns={f'{column}': f'{trans}'}, inplace=True)
     wb.to_sql(sheetname, con)
     con.commit()
     con.close()
 
+    ss = openpyxl.load_workbook(file_name)
+    ss_sheet = ss.get_sheet_by_name(sheetname)
+    ss_sheet.title = old_name
+    sheetname = old_name
+    ss.save(file_name)
+
     # ----------------Чтение exel файла----------------
 
-    result = pd.read_excel(file_name).columns.values
+    result = pd.read_excel(file_name, sheetname).columns.values
     counter = 0
     for it in result:
-        result[counter] = result[counter].replace(' ', '')
-        result[counter] = result[counter].replace("'", '')
         result[counter] = translit(result[counter], language_code='ru', reversed=True)
+        result[counter] = re.sub(r'[^A-z0-9]', '', result[counter])
         counter += 1
     xl = pd.ExcelFile(file_name).sheet_names
     index = xl.index(sheetname)
+    print(index)
     xl = pd.ExcelFile(file_name).sheet_names[index]
     xl = translit(xl, language_code='ru', reversed=True)
-    print(xl)
 
     # ----------------Работа с файлом классов бд----------------
 
-    trash = f'class {xl}(db.Model):\n'
+    trash = f'class {xl}(db.Model):\n\tindex = db.Column(primary_key=True)\n'
     i = 0
     with open('Httpapp/models.py', 'r') as f:
         old_data = f.read()
     while i < len(result):
-        if i == 0:
-            trash = trash + '\t' + result[i].replace("'", '') + ' = db.Column(primary_key=True)\n'
-        else:
-            trash = trash + '\t' + result[i].replace("'", '') + ' = db.Column()\n'
+        trash = trash + '\t' + result[i].replace("'", '') + ' = db.Column()\n'
         i += 1
     with open('Httpapp/models.py', 'w') as f:
         f.write(old_data + trash + '\n')
