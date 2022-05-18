@@ -32,3 +32,19 @@ class User (db.Model, UserMixin):
 def load_user(user_id):
     return User.query.get(user_id)
 
+
+class List1(db.Model):
+	index = db.Column(primary_key=True)
+	Unnamed0 = db.Column()
+	BazaTMTs = db.Column()
+	Tip = db.Column()
+	Razmer = db.Column()
+	Bazapokupatelja = db.Column()
+	Tip1 = db.Column()
+	Razmer1 = db.Column()
+	Baza4postavschik = db.Column()
+	Unnamed8 = db.Column()
+	Unnamed9 = db.Column()
+	Sdelka = db.Column()
+	Unnamed11 = db.Column()
+

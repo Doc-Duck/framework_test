@@ -4,8 +4,9 @@ from flask_login import login_user, login_required, logout_user, current_user, l
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from Httpapp import db, apps, manager
-from Httpapp.models import Items, User #list_add
+from Httpapp.models import Items, User ,List1 #list_add
 from Httpapp.exelimport import new_table
+from Httpapp.elementadd import new_element
 
 
 @apps.route('/')
@@ -77,11 +78,20 @@ def addprod():
         return render_template('adprod.html')
 
 
-@apps.route('/viewer')
+@apps.route('/viewer', methods=['POST', 'GET'])
 @login_required
 def viewer():
+    if request.method == 'POST':
+        print(request.form['Карандаши'])
     items = Items.query.order_by(Items.id).all()
     return render_template("viewer.html", items=items)
+
+
+@apps.route('/editviewer', methods=['POST', 'GET'])
+@login_required
+def editviewer():
+    items = Items.query.order_by(Items.id).all()
+    return render_template("editviewer.html", items=items)
 
 
 @manager.user_loader
@@ -96,3 +106,37 @@ def addtable():
         sheetname = request.form['sheetname']
         new_table(rf'{ route }', f'{sheetname}')
     return render_template('addtable.html')
+
+
+@apps.route("/update", methods=["POST"])
+def update():
+    updatedname = request.form.get("updatedname")
+    beforename = request.form.get("beforename")
+    updatedprice = request.form.get("updatedprice")
+    beforeprice = request.form.get("beforeprice")
+    student = Items.query.filter_by(name=beforename).first()
+    student.name = updatedname
+    student.price = updatedprice
+
+    db.session.commit()
+    return redirect("/viewer")
+
+
+
+@apps.route("/List1")
+@login_required
+def list1():
+	list1 = List1.query.all()
+	return render_template("List1.html", List1=list1)
+
+
+@apps.route('/test', methods=['POST', 'GET'])
+@login_required
+def test():
+    if request.method == 'POST':
+        type = request.form['type']
+        value = request.form['value']
+        action = request.form['action']
+        print(type,value,action)
+        new_element(type, value, action)
+    return render_template("test.html")
