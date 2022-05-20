@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <div class="dropdown mt-1">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">Dropdown button</button>
+        <form method="post" class="text-center dropdown-menu">
+            <select name="type" class="form-select mt-2" aria-label="Default select example">
+                <option selected>Тип объекта</option>
+                <option value="button">Кнопка</option>
+                <option value="input">Поле ввода</option>
+                <option value="p">Текст</option>
+            </select>
+            <input class="form-control mt-3" name="value" placeholder="Название" type="text">
+            <input class="form-control mt-3" name="action" placeholder="Действие" type="text">
+            <input class="mt-3 btn btn-success" value="Добавить" type="submit">
+        </form>
+    </div>
+    <div class="mt-3">
+        <a href="qwer" class="btn btn-success">qwer
+	</a><a href="addprod" class="btn btn-success">oaoao
+	</a><!--- add link --->
+    </div>
+    <!--- add div --->
+    <!--- add chart --->
+{% endblock %}

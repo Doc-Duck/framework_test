@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+<div class="col" style="overflow-x:auto;">
+    {% for el in items %}
+        <form method="POST" action="./update">
+            <table class="table" style="text-align: center">
+                <tr>
+                <td>{{ el.id }}</td>
+                <td>
+                    <input type="hidden" value="{{ el.name }}" name="beforename">
+                    <input style="text-align: center" type="text" value="{{ el.name }}" name="updatedname">
+                </td>
+                <td>
+                    <input type="hidden" value="{{ el.price }}" name="beforeprice">
+                    <input style="text-align: center"  type="text" value="{{ el.price }}" name="updatedprice">
+                </td>
+                <td><input type="submit" value="✓"></td>
+                </tr>
+            </table>
+        </form>
+    {% endfor %}
+</div>
+{% endblock %}

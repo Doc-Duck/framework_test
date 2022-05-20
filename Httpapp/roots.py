@@ -6,7 +6,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from Httpapp import db, apps, manager
 from Httpapp.models import Items, User ,List1 #list_add
 from Httpapp.exelimport import new_table
-from Httpapp.elementadd import new_element
+from Httpapp.elementadd import new_element, new_chart
 
 
 @apps.route('/')
@@ -82,7 +82,12 @@ def addprod():
 @login_required
 def viewer():
     if request.method == 'POST':
-        print(request.form['Карандаши'])
+        type = request.form['type']
+        column_x = request.form['column-x']
+        column_y = request.form['column-y']
+        file_name = request.form['file-name']
+        print(file_name, type, column_x, column_y)
+        new_chart(file_name, type, column_x, column_y)
     items = Items.query.order_by(Items.id).all()
     return render_template("viewer.html", items=items)
 
@@ -137,6 +142,6 @@ def test():
         type = request.form['type']
         value = request.form['value']
         action = request.form['action']
-        print(type,value,action)
         new_element(type, value, action)
+        new_chart('viewer', "line", "name", "price")
     return render_template("test.html")

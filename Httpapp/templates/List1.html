@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+        
+        {% block body %}
+        
+        <table class="table table-striped container">
+          <thead>
+	          </thead>
+	          <tbody>
+	          {% for el in List1 %}
+            <tr>
+                <td style="text-align: center">{{ el.Unnamed0 }}</td>
+			<td style="text-align: center">{{ el.BazaTMTs }}</td>
+			<td style="text-align: center">{{ el.Tip }}</td>
+			<td style="text-align: center">{{ el.Razmer }}</td>
+			<td style="text-align: center">{{ el.Bazapokupatelja }}</td>
+			<td style="text-align: center">{{ el.Tip1 }}</td>
+			<td style="text-align: center">{{ el.Razmer1 }}</td>
+			<td style="text-align: center">{{ el.Baza4postavschik }}</td>
+			<td style="text-align: center">{{ el.Unnamed8 }}</td>
+			<td style="text-align: center">{{ el.Unnamed9 }}</td>
+			<td style="text-align: center">{{ el.Sdelka }}</td>
+			<td style="text-align: center">{{ el.Unnamed11 }}</td>
+			
+            </tr>		
+          {% endfor %}
+	          </tbody>
+	        </table>
+        {% endblock %}

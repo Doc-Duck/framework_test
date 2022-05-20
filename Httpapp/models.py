@@ -7,6 +7,7 @@ class Items(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float(100), nullable=False)
+    amount = db.Column()
 
     def __repr__(self):
         return "%s %s" % (str(self.name), str(self.price))
