@@ -16,11 +16,17 @@
             </tbody>
         </table>
         <canvas id="1chart" draggable="true" style="width:100%; max-width:600px"></canvas>
-        <div class="row">
+        <form class="container d-flex" action="/adprod" method="post">
+            <input class="form-control mt-3 me-3" name="name" placeholder="Имя" type="text">
+            <input class="form-control mt-3 me-3" name="price" placeholder="Цена" type="text">
+            <input class="form-control mt-3 me-3" name="amount" placeholder="Кол-во" type="text">
+            <input class="mt-3 btn btn-success" value="Создать" type="submit">
+        </form>
+        <div class="d-flex mt-3">
             <a href="editviewer">
-                <button class="btn btn-warning col-1">Edit</button>
+                <button class="btn btn-warning me-3">Edit</button>
             </a>
-            <div class="dropdown mt-1">
+            <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
                         data-bs-toggle="dropdown" aria-expanded="false">Dropdown button
                 </button>
@@ -39,7 +45,7 @@
         <script>
             var xValues = [{% for el in items %}"{{ el.name }}",{% endfor %}];
             var yValues = [{% for el in items %}{{ el.price }}, {% endfor %}];
-            var barColors = ["red", "green", "blue", "orange", "brown"];
+            var barColors = ['rgba(255, 99, 132, 0.3)', 'rgba(255, 159, 64, 0.5)', 'rgba(255, 205, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(54, 162, 235, 0.5)',];
 
             new Chart("1chart", {
                 type: "bar",
@@ -57,18 +63,20 @@
                         text: "Items"
                     },
                     scales: {
-                        yAxes: [{ticks: {min: 0, max: 120}}],
+                        yAxes: [{ticks: {min: 0}}],
                     }
                 }
             });
         </script>
-        <script>
-            function myFunction() {
-                document.getElementById("change").style.display = "block";
-            }
-        </script>
     </div>
+    <div class="row justify-content-center">
+
+<canvas style="width:50%; max-width:700px" id="line"></canvas>
+<canvas style="width:50%; max-width:700px" id="pie"></canvas>
 <!--- add div --->
+    </div>
+<script>var labels = [{% for el in items %}'{{ el.name }}',{% endfor %}];var data = {labels: labels, datasets: [{label: 'My First dataset', backgroundColor: 'rgba({{range(1, 255)|random}},{{range(1, 255)|random}},{{range(1, 255)|random}}, 0.7)', borderColor: 'rgb(255, 99, 132)', data: [{% for el in items %}'{{ el.price }}',{% endfor %}],}]};var config = {type: 'line', data: data, options: {}};</script><script>var myChart = new Chart(document.getElementById('line'), config);</script>
+<script>var data = {labels: [{% for el in items %}'{{ el.name }}',{% endfor %}], datasets: [{label: 'My First Dataset', data: [{% for el in items %}'{{ el.amount }}',{% endfor %}],backgroundColor: [{% for el in items %}'rgba({{range(1, 255)|random}},{{range(1, 255)|random}},{{range(1, 255)|random}}, 0.7)',{% endfor %}], hoverOffset: 4}]};var config = {type: 'pie', data: data,};</script><script>var myChart = new Chart(document.getElementById('pie'), config);</script>
 <!--- add chart --->
-<!--- add link --->
+    <!--- add link --->
 {% endblock %}

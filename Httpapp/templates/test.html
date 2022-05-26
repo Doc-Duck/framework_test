@@ -1,26 +1,46 @@
 {% extends 'base.html' %}
 
 {% block body %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-    <div class="dropdown mt-1">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">Dropdown button</button>
-        <form method="post" class="text-center dropdown-menu">
-            <select name="type" class="form-select mt-2" aria-label="Default select example">
-                <option selected>Тип объекта</option>
-                <option value="button">Кнопка</option>
-                <option value="input">Поле ввода</option>
-                <option value="p">Текст</option>
-            </select>
-            <input class="form-control mt-3" name="value" placeholder="Название" type="text">
-            <input class="form-control mt-3" name="action" placeholder="Действие" type="text">
-            <input class="mt-3 btn btn-success" value="Добавить" type="submit">
-        </form>
-    </div>
-    <div class="mt-3">
-        <a href="qwer" class="btn btn-success">qwer
-	</a><a href="addprod" class="btn btn-success">oaoao
-	</a><!--- add link --->
-    </div>
-    <!--- add div --->
-    <!--- add chart --->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask dynamic WTF forms</title>
+</head>
+<body>
+    <h1 style="text-align: center;">Создать Таблицу</h1>
+    <form method="POST" action="">
+        {{ form.csrf_token }}
+        {{form.table_name.label}}
+        {{ form.table_name() }} <br>
+        <h3>Колонки</h3>
+        {{ form.columns() }}
+        <button type="submit">Создать</button>
+    </form>
+    <button id="add-movie-field">Добавить колонку</button>
+</body>
+</html>
+    <script>
+    window.onload = function() {
+        let addMovieFieldBtn = document.getElementById('add-movie-field');
+        addMovieFieldBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            let allMoviesFieldWrapper = document.getElementById('columns');
+            let allMoviesField = allMoviesFieldWrapper.getElementsByTagName('input');
+            if(allMoviesField.length > 100) {
+                alert('You can  have only 100 columns');
+                return;
+            }
+            let movieInputIds = []
+            for(let i = 0; i < allMoviesField.length; i++) {
+                movieInputIds.push(parseInt(allMoviesField[i].name.split('-')[1]));
+            }
+            let newFieldName = `columns-${Math.max(...movieInputIds) + 1}`;
+            allMoviesFieldWrapper.insertAdjacentHTML('beforeend',`
+            <li><label for="${newFieldName}">Movie Name</label> <input id="${newFieldName}" name="${newFieldName}" type="text" value=""></li>
+            `);
+        });
+    }
+</script>
 {% endblock %}

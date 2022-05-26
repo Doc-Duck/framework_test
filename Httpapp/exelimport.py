@@ -3,6 +3,11 @@ import pandas as pd
 from transliterate import translit
 import openpyxl
 import re
+import io
+import string
+
+
+from Httpapp import db, apps, manager
 
 
 def new_table(file_name, sheetname):
@@ -104,3 +109,77 @@ def new_table(file_name, sheetname):
     new_data = old_data.replace('<!--- add link --->', f'<li><a href="{ xl }" class="dropdown-item">{ xl.lower() }</a></li>\n\t\t\t\t\t\t<!--- add link --->')
     with open('Httpapp/templates/base.html', 'w') as f:
         f.write(new_data)
+
+
+def add_table(table_name, columns):
+    table_cols = ''
+    for col in columns:
+        table_cols += f'<td style="text-align: center">{{{{ el.{col} }}}}</td>\n\t\t\t\t'
+
+    with io.open(f'Httpapp/templates/l_template.html', 'r') as a:
+        old_data = a.read()
+    old_data = old_data.replace('<!--- table_cols --->', table_cols)
+    old_data = old_data.replace('<!--- table_name --->', table_name)
+    old_data = old_data.replace('<!--- edit_table --->', f'{table_name}_edit')
+    for col in columns:
+        old_data = old_data.replace('<!--- add_inputs --->', f'<input class="form-control mt-3 me-3" name="{col}" placeholder="{col}" type="text">\n\t\t\t<!--- add_inputs --->')
+    f = open(f'Httpapp/templates/{table_name}.html', 'a+')
+    f.write(old_data)
+    f.close()
+
+    trash = f'class {string.capwords(table_name)}(db.Model):\n\tindex = db.Column(db.Integer,primary_key=True)\n'
+    with open('Httpapp/models.py', 'r') as f:
+        old_data = f.read()
+    for col in columns:
+        trash = trash + '\t' + col + ' = db.Column(db.String)\n'
+    with open('Httpapp/models.py', 'w') as f:
+        f.write(old_data + trash + '\n')
+    db.create_all()
+
+    reqs = ''
+    reqs_com = ''
+    for col in columns:
+        reqs += f"""{col} = request.form['{col}']
+        """
+        reqs_com += f"{col}={col},"
+    reqs_com = reqs_com.rstrip(reqs_com[-1])
+
+    my_file = open('Httpapp/roots.py', 'a+')
+    text_for_file = f'''@apps.route('/{table_name}', methods=['POST', 'GET'])
+@login_required
+def {table_name}():
+    if request.method == 'POST':
+        type = request.form['type']
+        column_x = request.form['column-x']
+        column_y = request.form['column-y']
+        file_name = request.form['file-name']
+        new_chart(file_name, type, column_x, column_y)
+    {table_name} = {string.capwords(table_name)}.query.order_by({string.capwords(table_name)}.index).all()
+    return render_template("{table_name}.html", {table_name}={table_name})
+    
+
+@apps.route('/adprod_{table_name}', methods=['POST'])
+@login_required
+def addprod_{table_name}():
+    if request.method == 'POST':
+        {reqs}
+        items = {string.capwords(table_name)}({reqs_com})
+        db.session.add(items)
+        db.session.commit()
+        return redirect('{table_name}')'''
+    my_file.write(text_for_file)
+    my_file.close()
+
+    with open('Httpapp/roots.py', 'r') as f:
+        old_data = f.read()
+    new_data = old_data.replace('#list_add', f',{string.capwords(table_name)} #list_add')
+    with open('Httpapp/roots.py', 'w') as f:
+        f.write(new_data)
+
+
+
+
+
+
+
+
