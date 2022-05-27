@@ -7,7 +7,7 @@ from wtforms import StringField, FieldList
 from wtforms.validators import DataRequired
 
 from Httpapp import db, apps, manager
-from Httpapp.models import Items, User, List1 ,Asd #list_add
+from Httpapp.models import Items, User, List1 #list_add
 from Httpapp.exelimport import new_table, add_table
 from Httpapp.elementadd import new_element, new_chart
 
@@ -146,37 +146,18 @@ def list1():
 @apps.route('/test', methods=['POST', 'GET'])
 @login_required
 def test():
-    add_table('asd', ["asfd", "asdf", "ewrg", "dfhg"])
+
     favouriteMoviesForm = FavouriteMoviesForm()
     if favouriteMoviesForm.validate_on_submit():
         print(favouriteMoviesForm.table_name.data)
+        cols = []
         for en in favouriteMoviesForm.columns.entries:
-            print(en.data)
+            if len(str(en)) > 60:
+                print(len(str(en)))
+                cols.append(en.data)
+        print(cols)
+        add_table(favouriteMoviesForm.table_name.data, cols)
         return render_template('test.html', table_name=favouriteMoviesForm.table_name.data, columns=favouriteMoviesForm.columns.entries, form=favouriteMoviesForm)
     return render_template('test.html', form=favouriteMoviesForm)
-@apps.route('/asd', methods=['POST', 'GET'])
-@login_required
-def asd():
-    if request.method == 'POST':
-        type = request.form['type']
-        column_x = request.form['column-x']
-        column_y = request.form['column-y']
-        file_name = request.form['file-name']
-        new_chart(file_name, type, column_x, column_y)
-    asd = Asd.query.order_by(Asd.index).all()
-    return render_template("asd.html", asd=asd)
-    
 
-@apps.route('/adprod_asd', methods=['POST'])
-@login_required
-def addprod_asd():
-    if request.method == 'POST':
-        asfd = request.form['asfd']
-        asdf = request.form['asdf']
-        ewrg = request.form['ewrg']
-        dfhg = request.form['dfhg']
-        
-        items = Asd(asfd=asfd,asdf=asdf,ewrg=ewrg,dfhg=dfhg)
-        db.session.add(items)
-        db.session.commit()
-        return redirect('asd')
+

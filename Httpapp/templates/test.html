@@ -13,12 +13,12 @@
     <form method="POST" action="">
         {{ form.csrf_token }}
         {{form.table_name.label}}
-        {{ form.table_name() }} <br>
-        <h3>Колонки</h3>
+        {{ form.table_name(class="form-control mt-3 text-center", placeholder="Название")}} <br>
+        <h3 style="text-align: center;">Колонки</h3>
         {{ form.columns() }}
-        <button type="submit">Создать</button>
+        <button class="btn btn-success" id="add-movie-field">Добавить колонку</button>
+        <button class="btn btn-success" type="submit">Создать</button>
     </form>
-    <button id="add-movie-field">Добавить колонку</button>
 </body>
 </html>
     <script>
@@ -38,7 +38,7 @@
             }
             let newFieldName = `columns-${Math.max(...movieInputIds) + 1}`;
             allMoviesFieldWrapper.insertAdjacentHTML('beforeend',`
-            <li><label for="${newFieldName}">Movie Name</label> <input id="${newFieldName}" name="${newFieldName}" type="text" value=""></li>
+            <li><input class="form-control mt-3 text-center" id="${newFieldName}" name="${newFieldName}" type="text" placeholder="Название колонки" value=""></li>
             `);
         });
     }

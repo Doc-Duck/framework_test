@@ -49,10 +49,4 @@ class List1(db.Model):
 	Sdelka = db.Column()
 	Unnamed11 = db.Column()
 
-class Asd(db.Model):
-	index = db.Column(db.Integer,primary_key=True)
-	asfd = db.Column(db.String)
-	asdf = db.Column(db.String)
-	ewrg = db.Column(db.String)
-	dfhg = db.Column(db.String)
 

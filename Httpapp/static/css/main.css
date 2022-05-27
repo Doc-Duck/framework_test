@@ -1,0 +1,11 @@
+.bg-blue{
+    background-color: #0095b6;
+}
+
+.bg-light-blue{
+    background-color: #e5f4ff;
+}
+
+label {
+    display: none !important;
+}

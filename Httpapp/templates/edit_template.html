@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+<div class="col" style="overflow-x:auto;">
+    {% for el in items %}
+        <form method="POST" action="./<!--- link --->">
+            <table class="table" style="text-align: center">
+                <tr>
+                <!--- add_tds --->
+                <td><input type="submit" value="✓"></td>
+                </tr>
+            </table>
+        </form>
+    {% endfor %}
+</div>
+{% endblock %}

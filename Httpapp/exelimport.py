@@ -138,10 +138,17 @@ def add_table(table_name, columns):
 
     reqs = ''
     reqs_com = ''
+    update = ''
+    update_com = ''
     for col in columns:
         reqs += f"""{col} = request.form['{col}']
         """
         reqs_com += f"{col}={col},"
+        update += f"""updated_{col} = request.form.get("updated_{col}")
+    before_{col} = request.form.get("before_{col}")
+    """
+        update_com += f'''student.{col} = updated_{col}
+    '''
     reqs_com = reqs_com.rstrip(reqs_com[-1])
 
     my_file = open('Httpapp/roots.py', 'a+')
@@ -166,7 +173,23 @@ def addprod_{table_name}():
         items = {string.capwords(table_name)}({reqs_com})
         db.session.add(items)
         db.session.commit()
-        return redirect('{table_name}')'''
+        return redirect('{table_name}')
+
+
+@apps.route('/{table_name}_edit', methods=['POST', 'GET'])
+@login_required
+def {table_name}_{table_name}():
+    items = {string.capwords(table_name)}.query.all()
+    return render_template("{table_name}_edit.html", items=items)
+
+
+@apps.route("/update_{table_name}", methods=["POST"])
+def update_{table_name}():
+    {update}
+    student = {string.capwords(table_name)}.query.filter_by({columns[0]}=before_{columns[0]}).first()
+    {update_com}
+    db.session.commit()
+    return redirect("/{table_name}")'''
     my_file.write(text_for_file)
     my_file.close()
 
@@ -175,6 +198,20 @@ def addprod_{table_name}():
     new_data = old_data.replace('#list_add', f',{string.capwords(table_name)} #list_add')
     with open('Httpapp/roots.py', 'w') as f:
         f.write(new_data)
+
+    with io.open(f'Httpapp/templates/edit_template.html', 'r') as a:
+        old_data = a.read()
+    tds = ''
+    for col in columns:
+        tds += f'''<td>
+    <input type="hidden" value="{{{{ el.{col}}}}}" name="before_{col}">
+    <input style="text-align: center"  type="text" value="{{{{ el.{col}}}}}" name="updated_{col}">
+</td>'''
+    old_data = old_data.replace('<!--- add_tds --->', tds)
+    old_data = old_data.replace('<!--- link --->', f'update_{table_name}')
+    f = open(f'Httpapp/templates/{table_name}_edit.html', 'a+')
+    f.write(old_data)
+    f.close()
 
 
 
