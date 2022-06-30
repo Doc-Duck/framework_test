@@ -1,5 +1,5 @@
 import flask_login
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_user, login_required, logout_user, current_user, login_manager
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_wtf import FlaskForm
@@ -7,7 +7,7 @@ from wtforms import StringField, FieldList
 from wtforms.validators import DataRequired
 
 from Httpapp import db, apps, manager
-from Httpapp.models import Items, User, List1 #list_add
+from Httpapp.models import Items, User, List1 ,Hehehaha #list_add
 from Httpapp.exelimport import new_table, add_table
 from Httpapp.elementadd import new_element, new_chart
 
@@ -64,7 +64,7 @@ def login():
 
         if user and check_password_hash(user.password, password):
             login_user(user)
-            return redirect(url_for('addprod'))
+            return redirect(url_for('viewer'))
         else:
             flash('Данные введены некорректно')
             redirect(url_for('login'))
@@ -108,19 +108,28 @@ def editviewer():
     return render_template("editviewer.html", items=items)
 
 
-@apps.route("/update", methods=["POST"])
+@apps.route("/update", methods=["POST", 'GET'])
 def update():
-    updatedname = request.form.get("updatedname")
-    beforename = request.form.get("beforename")
-    updatedprice = request.form.get("updatedprice")
-    beforeprice = request.form.get("beforeprice")
-    student = Items.query.filter_by(name=beforename).first()
-    student.name = updatedname
-    student.price = updatedprice
-
-    db.session.commit()
-    return redirect("/viewer")
-
+    try:
+        if request.method == 'POST':
+            field = request.form['field']
+            value = request.form['value']
+            editid = request.form['id']
+            print(value, editid, field)
+            heh = Items.query.filter_by(id=editid).first()
+            print(heh)
+            if field == 'name':
+                heh.name = value
+                print(value)
+            if field == 'price':
+                heh.price = value
+            if field == 'amount':
+                heh.amount = value
+            db.session.commit()
+            success = 1
+        return jsonify(success)
+    except Exception as e:
+        print(e)
 
 @manager.user_loader
 def load_user(user_id):
@@ -146,7 +155,6 @@ def list1():
 @apps.route('/test', methods=['POST', 'GET'])
 @login_required
 def test():
-
     favouriteMoviesForm = FavouriteMoviesForm()
     if favouriteMoviesForm.validate_on_submit():
         print(favouriteMoviesForm.table_name.data)
@@ -160,4 +168,59 @@ def test():
         return render_template('test.html', table_name=favouriteMoviesForm.table_name.data, columns=favouriteMoviesForm.columns.entries, form=favouriteMoviesForm)
     return render_template('test.html', form=favouriteMoviesForm)
 
+@apps.route('/HEheHAha', methods=['POST', 'GET'])
+@login_required
+def HEheHAha():
+    if request.method == 'POST':
+        type = request.form['type']
+        column_x = request.form['column-x']
+        column_y = request.form['column-y']
+        file_name = request.form['file-name']
+        new_chart(file_name, type, column_x, column_y)
+    HEheHAha = Hehehaha.query.order_by(Hehehaha.index).all()
+    return render_template("HEheHAha.html", HEheHAha=HEheHAha)
+    
 
+@apps.route('/adprod_HEheHAha', methods=['POST'])
+@login_required
+def addprod_HEheHAha():
+    if request.method == 'POST':
+        col1 = request.form['col1']
+        col2 = request.form['col2']
+        col3 = request.form['col3']
+        
+        items = Hehehaha(col1=col1,col2=col2,col3=col3)
+        db.session.add(items)
+        db.session.commit()
+        return redirect('HEheHAha')
+
+
+@apps.route('/HEheHAha_edit', methods=['POST', 'GET'])
+@login_required
+def HEheHAha_HEheHAha():
+    items = Hehehaha.query.all()
+    return render_template("HEheHAha_edit.html", items=items)
+
+
+@apps.route("/update_HEheHAha", methods=["POST", 'GET'])
+def update_HEheHAha():
+    try:
+        if request.method == 'POST':
+            field = request.form['field']
+            value = request.form['value']
+            editid = request.form['id']
+            print(value, editid, field)
+            heh = Hehehaha.query.filter_by(index=editid).first()
+            print(heh)
+            if field == 'username':
+                heh.col1 = value
+                print(value)
+            if field == '2':
+                heh.col2 = value
+            if field == '3':
+                heh.col3 = value
+            db.session.commit()
+            success = 1
+        return jsonify(success)
+    except Exception as e:
+        print(e)

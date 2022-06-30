@@ -50,3 +50,9 @@ class List1(db.Model):
 	Unnamed11 = db.Column()
 
 
+class Hehehaha(db.Model):
+	index = db.Column(db.Integer,primary_key=True)
+	col1 = db.Column(db.String)
+	col2 = db.Column(db.String)
+	col3 = db.Column(db.String)
+

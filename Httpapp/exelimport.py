@@ -213,6 +213,13 @@ def update_{table_name}():
     f.write(old_data)
     f.close()
 
+    with io.open(f'Httpapp/templates/base.html', 'r', encoding = "ISO-8859-1") as g:
+        old_data = g.read()
+    new_data = old_data.replace('<!--- add link --->', f'<li><a href="{ table_name }" class="dropdown-item">{ table_name.lower() }</a></li>\n\t\t\t\t\t\t<!--- add link --->')
+    with io.open(f'Httpapp/templates/base.html', 'w', encoding="ISO-8859-1") as g:
+        g.write(new_data)
+    f.close()
+
 
 
 

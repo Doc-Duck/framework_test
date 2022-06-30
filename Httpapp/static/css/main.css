@@ -9,3 +9,10 @@
 label {
     display: none !important;
 }
+
+.txtedit {
+    display: none;
+    width: 99%;
+    height: 30px;
+}
+
